@@ -2,12 +2,28 @@
 
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { winningCombinations } from "../utils/winningCombinations";
+import { winningCombinations } from "../constants/winningCombinations";
+import { useGlobalContext } from "@/context/user";
 
 const Grid = () => {
   const [grid, setGrid] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0]);
-  const [turn, setTurn] = useState(1);
   const [winnerCombo, setWinnerCombo] = useState(null);
+  const [gameTied, setGameTied] = useState(null);
+  const [rotate, setRotate] = useState(0);
+  const {
+    playerOne,
+    setPlayerOne,
+    playerTwo,
+    setPlayerTwo,
+    newGame,
+    setNewGame,
+    countOne,
+    setCountOne,
+    countTwo,
+    setCountTwo,
+    turn,
+    setTurn,
+  } = useGlobalContext();
 
   const handleClick = (clickedIndex) => {
     if (grid[clickedIndex] !== 0) {
@@ -28,40 +44,37 @@ const Grid = () => {
   };
 
   useEffect(() => {
-    checkWinner();
     checkGameEnded();
+    checkWinner();
   }, [grid]);
 
   useEffect(() => {
     if (winnerCombo) {
       alert(`vencedor ${winnerCombo}`);
+      setGrid([0, 0, 0, 0, 0, 0, 0, 0, 0]);
+      setWinnerCombo(null);
     }
-  }, [winnerCombo]);
 
-  const checkGameEnded = () => {
-    if (grid.every((item) => item !== 0)) {
-      alert("Jogo acabou, deu velha!");
+    if (gameTied) {
+      setGrid([0, 0, 0, 0, 0, 0, 0, 0, 0]);
+      setGameTied(null);
     }
-  };
+  }, [winnerCombo, gameTied]);
 
   const checkWinner = () => {
     let winner = null;
 
-    for (let values of winningCombinations) {
-      if (
-        grid[values[0]] === 1 &&
-        grid[values[1]] === 1 &&
-        grid[values[2]] === 1
-      ) {
-        winner = "player 1";
+    for (let combination of winningCombinations) {
+      const { indexes } = combination;
+
+      if (grid[indexes[0]] === 1 && grid[indexes[1]] === 1 && grid[indexes[2]] === 1) {
+        winner = playerOne;
+        setCountOne(countOne + 1);
       }
 
-      if (
-        grid[values[0]] === 2 &&
-        grid[values[1]] === 2 &&
-        grid[values[2]] === 2
-      ) {
-        winner = "player 2";
+      if (grid[indexes[0]] === 2 && grid[indexes[1]] === 2 && grid[indexes[2]] === 2) {
+        winner = playerTwo;
+        setCountTwo(countTwo + 1);
       }
 
       if (winner) {
@@ -71,8 +84,23 @@ const Grid = () => {
     }
   };
 
+  const checkGameEnded = () => {
+    if (grid.every((item) => item !== 0)) {
+      setGameTied(true);
+    }
+  };
+
+  const handleRotate = () => {
+    setRotate((prev) => (prev === 0 ? 90 : 0));
+  };
+
   return (
-    <section className="w-full h-full grid grid-cols-3 py-10 px-16">
+    <section
+      className={`w-full max-w-[600px] h-full max-h-[600px] grid grid-cols-3 py-10 px-16 rotate-[${rotate}deg] transition-all duration-500`}
+      onClick={() => {
+        handleRotate();
+      }}
+    >
       {grid.map((square, index) => (
         <span
           onClick={() => {

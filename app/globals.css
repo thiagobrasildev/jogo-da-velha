@@ -14,3 +14,9 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+@layer base {
+  .squareWinner {
+    @apply bg-red-500;
+  }
+}

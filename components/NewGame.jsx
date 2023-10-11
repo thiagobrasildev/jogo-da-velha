@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import { useGlobalContext } from "@/context/user";
+import React, { useEffect, useState } from "react";
 
 const NewGame = () => {
   const [state, setState] = useState("newGame");
-  console.log(state);
+  const { playerOne, setPlayerOne, playerTwo, setPlayerTwo, newGame, setNewGame } =
+    useGlobalContext();
 
   return (
     <div className="w-[50vw] h-[50vh] py-10 rounded-md border border-gray-600 px-4 flex flex-col items-center justify-center gap-11">
@@ -20,12 +22,19 @@ const NewGame = () => {
 
       {state === "playerOne" && (
         <form className="flex flex-col items-center justify-center gap-3">
-          <label className="text-base text-green-700">
-            Jogador N1 digite seu nome:
-          </label>
-          <input type="text" className="border border-green-700 outline-none" />
+          <label className="text-base text-green-700">Jogador N1 digite seu nome:</label>
+          <input
+            type="text"
+            className="border border-green-700 outline-none"
+            value={playerOne}
+            onChange={(e) => setPlayerOne(e.target.value)}
+            maxLength={10}
+            minLength={3}
+            required
+            autoFocus
+          />
           <button
-            onClick={() => setState("playerTwo")}
+            onClick={() => playerOne && setState("playerTwo")}
             className="bg-green-700 text-white rounded-md p-2 hover:bg-green-600 transition-colors ease-in duration-100"
           >
             Continuar
@@ -34,15 +43,22 @@ const NewGame = () => {
       )}
 
       {state === "playerTwo" && (
-        <form className="flex flex-col items-center justify-center gap-3">
-          <label className="text-base text-yellow-700">
-            Jogador N2 digite seu nome:
-          </label>
+        <form className="flex flex-col items-center justify-center gap-3" n>
+          <label className="text-base text-yellow-700">Jogador N2 digite seu nome:</label>
           <input
             type="text"
             className="border border-yellow-700 outline-none"
+            value={playerTwo}
+            onChange={(e) => setPlayerTwo(e.target.value)}
+            maxLength={10}
+            minLength={3}
+            required
+            autoFocus
           />
-          <button className="bg-yellow-700 text-white rounded-md p-2 hover:bg-yellow-600 transition-colors ease-in duration-100">
+          <button
+            onClick={() => playerTwo && setNewGame(true)}
+            className="bg-yellow-700 text-white rounded-md p-2 hover:bg-yellow-600 transition-colors ease-in duration-100"
+          >
             Continuar
           </button>
         </form>
