@@ -9,7 +9,7 @@ const Grid = () => {
   const [grid, setGrid] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0]);
   const [winnerCombo, setWinnerCombo] = useState(null);
   const [gameTied, setGameTied] = useState(null);
-  const [rotate, setRotate] = useState(0);
+  const [rotate, setRotate] = useState("rotate-0deg");
   const {
     playerOne,
     setPlayerOne,
@@ -91,12 +91,12 @@ const Grid = () => {
   };
 
   const handleRotate = () => {
-    setRotate((prev) => (prev === 0 ? 90 : 0));
+    setRotate((prev) => (prev === "rotate-0deg" ? "rotate-90deg" : "rotate-0deg"));
   };
 
   return (
     <section
-      className={`w-full max-w-[600px] h-full max-h-[600px] grid grid-cols-3 py-10 px-16 rotate-[${rotate}deg] transition-all duration-500`}
+      className={`w-full max-w-[600px] h-full max-h-[600px] grid grid-cols-3 py-10 px-16 ${rotate} transition-all duration-500`}
       onClick={() => {
         handleRotate();
       }}
